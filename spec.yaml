@@ -1,0 +1,22 @@
+blueprint:
+  id: wax-temporal-behavior-heatmap
+  tier: forensics-behavioral
+  status: alpha-ready
+  benchmark_target: PX-Perfection-Standard-v1.0
+
+features:
+  - contribution_style_activity_grid
+  - human_vs_bot_pattern_detection
+  - timezone_normalized_heatmap
+  - anomaly_highlighting
+
+recommended_stack:
+  viz: custom SVG calendar
+  computation: client_side_aggregation + Web Worker
+  data: Hyperion history
+
+machine_instructions:
+  - "Build GitHub-style contribution calendar heatmap for WAX activity"
+  - "Implement human vs bot pattern detection with clear visual signals"
+  - "Add timezone normalization and anomaly highlighting"
+  - "Create educational explanations of behavioral forensics"
