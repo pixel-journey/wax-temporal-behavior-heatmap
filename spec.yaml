@@ -1,22 +1,38 @@
 blueprint:
   id: wax-temporal-behavior-heatmap
+  name: Temporal Behavior Heatmap
   tier: forensics-behavioral
-  status: alpha-ready
-  benchmark_target: PX-Perfection-Standard-v1.0
+  category: analytics
+  status: refined
+  version: "0.5.0"
+  last_refined: "2026-10-18"
+
+metadata:
+  description: |
+    Pure day×hour activity grid from action timestamps with structural flags.
+    Educational companion to organic activity fingerprinter.
+  related_blueprints:
+    - wax-organic-activity-fingerprinter
+    - wax-funding-trail-lineage-graph
+
+invariants:
+  - Grid aggregation is pure given timestamps + timezone
+  - Flags cite triggers
+  - Must not use Math.random for analysis cells
+  - Not ban-grade by itself
 
 features:
-  - contribution_style_activity_grid
-  - human_vs_bot_pattern_detection
-  - timezone_normalized_heatmap
-  - anomaly_highlighting
-
-recommended_stack:
-  viz: custom SVG calendar
-  computation: client_side_aggregation + Web Worker
-  data: Hyperion history
+  implemented:
+    - buildHeatmapGrid, fingerprintTemporal, summarizeGrid
+    - HeatmapGridView, HeatmapStats, HeatmapFlags, demo
+    - app page wired to real engines
 
 machine_instructions:
-  - "Build GitHub-style contribution calendar heatmap for WAX activity"
-  - "Implement human vs bot pattern detection with clear visual signals"
-  - "Add timezone normalization and anomaly highlighting"
-  - "Create educational explanations of behavioral forensics"
+  - Use examples/engines.ts
+  - Always pass explicit timeZone in production
+  - Pair with interval entropy tools for richer timing analysis
+
+technical_requirements:
+  framework: Next.js + TypeScript
+  styling: Tailwind CSS
+  data: Hyperion history (production)
