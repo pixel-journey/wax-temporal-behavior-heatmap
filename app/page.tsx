@@ -1,58 +1,104 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import {
+  demoBotTimestamps,
+  demoHumanTimestamps,
+  fingerprintTemporal,
+} from '../examples/engines';
+
+type Mode = 'human' | 'bot';
+
+const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export default function TemporalBehaviorHeatmap() {
-  const [account, setAccount] = useState('pxjourney');
-  const [heatmapData, setHeatmapData] = useState<any>(null);
+  const [mode, setMode] = useState<Mode>('human');
 
-  const generateHeatmap = () => {
-    // Mock 7x24 activity grid for demo
-    const grid = Array.from({ length: 7 }, () =>
-      Array.from({ length: 24 }, () => Math.floor(Math.random() * 100))
-    );
-    setHeatmapData({ grid, account });
-  };
+  const summary = useMemo(() => {
+    const ts =
+      mode === 'human' ? demoHumanTimestamps(90) : demoBotTimestamps(90);
+    return fingerprintTemporal(ts, { timeZone: 'UTC' });
+  }, [mode]);
+
+  const max = Math.max(1, summary.maxCell);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
       <div className="max-w-5xl mx-auto">
-        <div className="font-press-start text-2xl tracking-widest text-emerald-400 mb-2">TEMPORAL BEHAVIOR HEATMAP</div>
-        <div className="text-xs opacity-60 mb-8">Pixel Journey • Behavioral Forensics • Human vs Bot Patterns</div>
+        <div className="text-2xl tracking-widest text-emerald-400 mb-2 font-bold">
+          TEMPORAL BEHAVIOR HEATMAP
+        </div>
+        <div className="text-xs opacity-60 mb-6">
+          Pixel Journey · Day×hour density · Not identity proof
+        </div>
 
-        <div className="glassmorphic-crt pixel-border p-6 rounded-2xl mb-6">
-          <div className="flex gap-3 mb-6">
-            <input
-              value={account}
-              onChange={e => setAccount(e.target.value)}
-              className="flex-1 bg-black/60 border border-white/10 px-4 py-3 rounded-xl font-mono text-sm"
-            />
-            <button onClick={generateHeatmap} className="px-8 py-3 bg-emerald-600 rounded-2xl">Generate Heatmap</button>
+        <div className="flex gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => setMode('human')}
+            className={`px-4 py-2 rounded-xl text-sm ${
+              mode === 'human' ? 'bg-emerald-600' : 'bg-white/10'
+            }`}
+          >
+            Demo human-like
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('bot')}
+            className={`px-4 py-2 rounded-xl text-sm ${
+              mode === 'bot' ? 'bg-amber-600' : 'bg-white/10'
+            }`}
+          >
+            Demo always-on
+          </button>
+        </div>
+
+        <div className="border border-white/10 bg-black/40 p-6 rounded-2xl mb-6 overflow-x-auto">
+          <div className="text-sm mb-3 opacity-70">
+            Activity by hour × weekday (UTC demo) · total {summary.totalActions}
           </div>
-
-          {heatmapData && (
-            <div>
-              <div className="text-sm mb-3 opacity-70">Activity by Hour of Day × Day of Week (Demo)</div>
-              <div className="grid grid-cols-25 gap-px bg-black/40 p-2 rounded">
-                {heatmapData.grid.flat().map((value: number, i: number) => (
+          <div
+            className="grid gap-px min-w-[640px]"
+            style={{ gridTemplateColumns: '24px repeat(24, minmax(0, 1fr))' }}
+          >
+            <div />
+            {Array.from({ length: 24 }, (_, h) => (
+              <div key={h} className="text-[8px] text-center opacity-40">
+                {h}
+              </div>
+            ))}
+            {summary.grid.map((row, d) => (
+              <div key={d} className="contents">
+                <div className="text-[10px] opacity-50 flex items-center">{DOW[d]}</div>
+                {row.map((v, h) => (
                   <div
-                    key={i}
-                    className="aspect-square"
+                    key={`${d}-${h}`}
+                    className="aspect-square rounded-[1px]"
+                    title={`${v}`}
                     style={{
-                      backgroundColor: `rgba(34, 197, 94, ${value / 120})`,
+                      backgroundColor: `rgba(34, 197, 94, ${0.08 + (v / max) * 0.9})`,
                     }}
-                    title={`${value} actions`}
                   />
                 ))}
               </div>
-              <div className="text-xs opacity-60 mt-3">Solid blocks often indicate automation. Clear daily gaps suggest human behavior.</div>
-            </div>
-          )}
+            ))}
+          </div>
+
+          <ul className="mt-4 space-y-1 text-xs opacity-80">
+            {summary.flags.map((f) => (
+              <li key={f.id}>
+                [{f.level}] {f.message}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="text-xs opacity-70">
-          In production, this fetches real action history from Hyperion and renders a full interactive contribution-style calendar with timezone normalization.
-        </div>
+        <p className="text-xs opacity-60 leading-relaxed">
+          Production: pass real Hyperion timestamps into{" "}
+          <code className="text-emerald-400/80">fingerprintTemporal</code> with an
+          explicit timezone. See <code className="text-emerald-400/80">/examples</code>.
+          Do not use heatmap density alone for bans or airdrop exclusion.
+        </p>
       </div>
     </div>
   );
