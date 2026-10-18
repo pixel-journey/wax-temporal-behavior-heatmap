@@ -1,115 +1,81 @@
-# wax-temporal-behavior-heatmap — Temporal Behavior Heatmap
+# wax-temporal-behavior-heatmap
 
-> **Status:** ✅ **FULL PX PERFECTION (Alpha-Ready)** | July 2026  
-> **Category:** Community Forensics & Behavioral Analytics  
-> **Parent Catalog:** [pixel-journey/wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
-> **Benchmark:** gkniftyheads-tracker + Pixel Journey PX Perfection Standard v1.0
+> **Status:** 🔄 Deep Refinement (PX Perfection Standard v1.1)  
+> **Category:** Behavioral analytics / light forensics  
+> **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
 
-**Goal:** A GitHub-style contribution calendar visualization that reveals when accounts or collections are most active on WAX. Helps distinguish human-like behavioral patterns from automated/bot behavior through clear 24/7 activity density grids.
+**Goal:** Build a transparent **day-of-week × hour-of-day** activity grid from action timestamps — contribution-calendar style — plus simple structural flags. Educational companion to the organic activity fingerprinter.
 
----
-
-## Educational Core (Why This Exists)
-
-Raw transaction lists don’t reveal behavioral rhythms. Bots often operate with mechanical consistency 24/7, while humans show natural sleep/wake cycles and weekly patterns. This visual tool makes those differences immediately obvious and quantifiable.
-
-**Common Pitfalls This Tool Addresses**:
-- Judging activity volume without understanding timing patterns
-- Missing obvious bot signals hidden in consistent 24/7 behavior
-- Overwhelming analysts with raw timestamps instead of visual summaries
-- Making Sybil or airdrop decisions without behavioral context
-
-**Learning Outcomes**:
-After studying this blueprint, you should be able to:
-- Understand how temporal patterns reveal human vs automated behavior
-- Build contribution-style calendar visualizations
-- Aggregate and normalize on-chain timestamps effectively
-- Design forensic tools that surface subtle behavioral signals
+> Timing heatmaps are **weak signals**. Always-on activity can be bots *or* global teams. Quiet nights depend on **timezone**. Never ban from a grid alone.
 
 ---
 
-## Tech Recommendations Matrix
+## Honesty note
 
-| Component             | Recommended                     | Alternative               | Why Chosen                                           | When to Choose Alternative          |
-|-----------------------|---------------------------------|---------------------------|------------------------------------------------------|-------------------------------------|
-| Visualization         | Custom SVG calendar grid        | Chart libraries           | Full control + retro pixel aesthetic                 | When you need faster development    |
-| Data Aggregation      | Client-side + Web Worker        | Server-side aggregation   | Transparent, private, educational                    | When you need very heavy computation|
-| Timezone Handling     | Client-side normalization       | UTC only                  | Accurate human pattern detection                     | Simpler global use cases            |
+An earlier page used **`Math.random()`** cells while the README claimed full PX perfection. Core logic is now pure aggregation in `examples/engines.ts`.
 
 ---
 
-## Machine-Optimized Spec (spec.yaml)
+## Quick Start
 
-```yaml
-blueprint:
-  id: wax-temporal-behavior-heatmap
-  tier: forensics-behavioral
-  status: alpha-ready
-  benchmark_target: PX-Perfection-Standard-v1.0
+```ts
+import { fingerprintTemporal } from "./examples/engines";
 
-features:
-  - contribution_style_activity_grid
-  - human_vs_bot_pattern_detection
-  - timezone_normalized_heatmap
-  - anomaly_highlighting
-
-recommended_stack:
-  viz: custom SVG calendar
-  computation: client_side_aggregation + Web Worker
-  data: Hyperion history
-
-machine_instructions:
-  - "Build GitHub-style contribution calendar heatmap for WAX activity"
-  - "Implement human vs bot pattern detection with clear visual signals"
-  - "Add timezone normalization and anomaly highlighting"
-  - "Create educational explanations of behavioral forensics"
+const summary = fingerprintTemporal(unixSecondsArray, { timeZone: "UTC" });
+// summary.grid[dow][hour], summary.flags, summary.evenness
 ```
 
----
-
-## Ecosystem Synergy
-
-This tool pairs extremely well with:
-- `wax-account-sybil-distance-scorer` — Add temporal signals to Sybil analysis
-- `wax-organic-activity-fingerprinter` — Combine with entropy/humanity scoring
-- `wax-collection-holder-overlap-cluster` — Add time-based community insights
-- Future governance and airdrop fairness tools
-
-It establishes a reusable behavioral analytics pattern.
+Render with `HeatmapGridView`, `HeatmapStats`, `HeatmapFlags`.
 
 ---
 
-## Implementation Highlights
+## 1. Educational Core
 
-Full production code committed with:
-- SVG contribution-style heatmap
-- Action aggregation by hour/day
-- Clear human vs bot visual differentiation
-- Anomaly highlighting
-- Demo mode with realistic datasets
+| Concept | Meaning |
+|---------|--------|
+| **Grid cell** | Count of actions in that local weekday + hour |
+| **Occupied ratio** | Share of 168 cells with any activity |
+| **Evenness** | How flat density is among active cells |
+| **Timezone** | Changes which hours look like “night” |
+
+### Learning outcomes
+
+- Aggregate timestamps into a 7×24 grid
+- Interpret coverage vs sleep-gap patterns cautiously
+- Pair with interval entropy (`wax-organic-activity-fingerprinter`)
 
 ---
 
-## How to Run
-```bash
-git clone https://github.com/pixel-journey/wax-temporal-behavior-heatmap.git
-npm install
-npm run dev
+## 2. Architecture
+
+```
+timestamps + timeZone → buildHeatmapGrid → summarizeGrid → UI
 ```
 
-Explore activity patterns and identify human-like vs automated behavior.
+Hyperion fetch stays at the app edge.
 
 ---
 
-## PX Perfection Alignment
+## 3. Integration levels
 
-This implementation targets:
-- Educational Depth: Strong explanations + learning outcomes
-- Documentation Layers: Excellent README + spec.yaml + ecosystem links
-- Machine Readiness: Detailed spec.yaml with AI instructions
-- Visual Design: Familiar contribution calendar with retro pixel polish
-- Ecosystem Synergy: Explicit companion relationships documented
+| Level | Scope |
+|-------|--------|
+| **Minimal** | Grid + counts |
+| **Recommended** | Stats + flags + TZ selector |
+| **Advanced** | Multi-account compare, year contribution calendar |
 
-Future iterations will add advanced anomaly detection, multi-account comparison, and deeper integration examples.
+---
 
-*Pixel Journey — Raising the bar for behavioral forensics tooling.*
+## 4. Ecosystem position
+
+- `wax-organic-activity-fingerprinter` — interval variance
+- `wax-funding-trail-lineage-graph` — capital origins
+- Airdrop / Sybil tools — soft signal only
+
+---
+
+## 5. License
+
+MIT — **Pixel Journey**
+
+*Last major refinement pass: October 2026*
