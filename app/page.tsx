@@ -6,38 +6,43 @@ import {
   demoHumanTimestamps,
   fingerprintTemporal,
 } from '../examples/engines';
+import { downloadText, exportHeatmapMarkdown } from '../examples/exportReport';
 import { fetchAccountActionTimestamps } from '../examples/live/hyperion';
+import { HEATMAP_MYTHS } from '../examples/myths';
 
 type Mode = 'live' | 'human' | 'bot';
 
 const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const TZ = 'UTC';
 
 export default function TemporalBehaviorHeatmap() {
   const [mode, setMode] = useState<Mode>('live');
   const [account, setAccount] = useState('eosio');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [liveTs, setLiveTs] = useState<number[] | null>(null);
   const [meta, setMeta] = useState<string | null>(null);
 
   const demoSummary = useMemo(() => {
     if (mode === 'human')
-      return fingerprintTemporal(demoHumanTimestamps(90), { timeZone: 'UTC' });
+      return fingerprintTemporal(demoHumanTimestamps(90), { timeZone: TZ });
     if (mode === 'bot')
-      return fingerprintTemporal(demoBotTimestamps(90), { timeZone: 'UTC' });
+      return fingerprintTemporal(demoBotTimestamps(90), { timeZone: TZ });
     return null;
   }, [mode]);
 
   const liveSummary = useMemo(
     () =>
       liveTs && liveTs.length > 0
-        ? fingerprintTemporal(liveTs, { timeZone: 'UTC' })
+        ? fingerprintTemporal(liveTs, { timeZone: TZ })
         : null,
     [liveTs]
   );
 
   const summary = mode === 'live' ? liveSummary : demoSummary;
   const max = Math.max(1, summary?.maxCell ?? 1);
+  const label = mode === 'live' ? account : mode;
 
   const runLive = useCallback(async () => {
     setLoading(true);
@@ -67,9 +72,32 @@ export default function TemporalBehaviorHeatmap() {
         <div className="text-2xl tracking-widest text-emerald-400 mb-2 font-bold">
           TEMPORAL BEHAVIOR HEATMAP
         </div>
-        <div className="text-xs opacity-60 mb-6">
-          Pixel Journey · Live Hyperion or demo · Not identity proof
+        <div className="text-xs opacity-60 mb-2">
+          Pixel Journey · educational-reference · weak signal
         </div>
+        <p className="text-xs opacity-50 mb-6 max-w-2xl">
+          Day×hour grid from timestamps. Not identity proof. Do not ban from the
+          grid alone.
+        </p>
+
+        <section
+          className="rounded-2xl border border-fuchsia-500/25 bg-fuchsia-500/5 p-4 text-xs space-y-3 max-w-2xl mb-6"
+          aria-label="Myths"
+        >
+          <h2 className="text-sm font-semibold text-fuchsia-100">Myths vs reality</h2>
+          {HEATMAP_MYTHS.map((m) => (
+            <div key={m.myth}>
+              <p className="text-red-200/90">
+                <span className="opacity-60">Myth: </span>
+                {m.myth}
+              </p>
+              <p className="text-emerald-100/90 mt-0.5">
+                <span className="opacity-60">Reality: </span>
+                {m.reality}
+              </p>
+            </div>
+          ))}
+        </section>
 
         <div className="flex flex-wrap gap-2 mb-6">
           <button
@@ -125,14 +153,36 @@ export default function TemporalBehaviorHeatmap() {
             {error}
           </div>
         )}
+        {status && (
+          <p className="mb-4 text-xs text-emerald-200/80" role="status">
+            {status}
+          </p>
+        )}
         {meta && (
           <div className="mb-4 text-xs opacity-50 break-all">{meta}</div>
         )}
 
         {summary && (
           <div className="border border-white/10 bg-black/40 p-6 rounded-2xl mb-6 overflow-x-auto">
-            <div className="text-sm mb-3 opacity-70">
-              Activity by hour × weekday (UTC) · total {summary.totalActions}
+            <div className="flex flex-wrap justify-between gap-2 mb-3">
+              <div className="text-sm opacity-70">
+                Activity by hour × weekday ({TZ}) · total {summary.totalActions} ·
+                evenness {summary.evenness.toFixed(2)}
+              </div>
+              <button
+                type="button"
+                className="px-3 py-1 text-xs rounded-lg bg-emerald-900"
+                onClick={() => {
+                  downloadText(
+                    `${label}-heatmap.md`,
+                    exportHeatmapMarkdown(label, summary, TZ),
+                    'text/markdown;charset=utf-8'
+                  );
+                  setStatus('Heatmap MD downloaded');
+                }}
+              >
+                Download MD
+              </button>
             </div>
             <div
               className="grid gap-px min-w-[640px]"
@@ -183,8 +233,8 @@ export default function TemporalBehaviorHeatmap() {
 
         <p className="text-xs opacity-60 leading-relaxed">
           Live: Hyperion → timestamps →{' '}
-          <code className="text-emerald-400/80">fingerprintTemporal</code>. Do not use
-          heatmap density alone for bans or airdrop exclusion.
+          <code className="text-emerald-400/80">fingerprintTemporal</code>. Companion:
+          organic-activity-fingerprinter. See POLICY.md.
         </p>
       </div>
     </div>

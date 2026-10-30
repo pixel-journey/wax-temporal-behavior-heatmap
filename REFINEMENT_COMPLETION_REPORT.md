@@ -1,8 +1,13 @@
-# REFINEMENT_COMPLETION_REPORT.md
+# Temporal behavior heatmap
 
-**Date:** 2026-10-18  
-**Status:** ✅ Refined (honesty pass)
+**Updated:** 2026-10-31
 
-Replaced random cell grid with pure day×hour aggregation, flags, reusable components, honest README.
+| Scope | Notes |
+|------|-------|
+| Engine | 7×24 grid, evenness, flags |
+| Live | Hyperion timestamps |
+| Education | myths, POLICY, MD export, vitest |
 
-Companion to `wax-organic-activity-fingerprinter`.
+```bash
+npm install && npm test
+```
