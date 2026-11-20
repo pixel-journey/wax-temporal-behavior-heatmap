@@ -6,19 +6,17 @@ import {
 } from "./engines";
 
 describe("fingerprintTemporal", () => {
-  it("bot demo has high coverage",
-    () => {
-      const s = fingerprintTemporal(demoBotTimestamps(90), { timeZone: "UTC" });
-      expect(s.totalActions).toBe(90);
-      expect(s.occupiedCellRatio).toBeGreaterThan(0.3);
-    });
+  it("bot demo covers 67 of 168 cells and raises no structural flag", () => {
+    const s = fingerprintTemporal(demoBotTimestamps(90), { timeZone: "UTC" });
+    expect(s.totalActions).toBe(90);
+    expect(s.occupiedCellRatio).toBe(67 / 168);
+    expect(s.flags.map((flag) => flag.id)).toEqual(["neutral"]);
+  });
 
-  it("human demo has actions and flags",
-    () => {
-      const s = fingerprintTemporal(demoHumanTimestamps(90), {
-        timeZone: "UTC",
-      });
-      expect(s.totalActions).toBe(90);
-      expect(s.flags.length).toBeGreaterThan(0);
-    });
+  it("human demo covers 75 of 168 cells and also stays neutral", () => {
+    const s = fingerprintTemporal(demoHumanTimestamps(90), { timeZone: "UTC" });
+    expect(s.totalActions).toBe(90);
+    expect(s.occupiedCellRatio).toBe(75 / 168);
+    expect(s.flags.map((flag) => flag.id)).toEqual(["neutral"]);
+  });
 });

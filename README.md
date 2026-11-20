@@ -1,7 +1,7 @@
 # Day-of-week × hour activity grid with soft structural flags
 
 > **Trust:** `educational-reference`  
-> **Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
+> **Catalog:** `wax-ecosystem-blueprint-catalog` (private index; not this public course)
 
 **One-sentence goal:** Teach a pure 7×24 count grid from timestamps in a chosen timezone, plus soft flags for coverage and night share — without claiming a ban signal.
 
@@ -13,9 +13,9 @@ The course is [EDUCATION.md](EDUCATION.md) (beginner, intermediate, masterclass)
 
 | Rule | Result |
 | --- | --- |
-| bot demo (90, UTC) | totalActions 90, occupiedCellRatio > 0.3 |
-| human demo (90, UTC) | totalActions 90, flags.length > 0 |
-| flat-coverage flag | occupied > 0.55 and evenness > 0.75 and total ≥ 40 |
+| bot demo (90, UTC) | 90 actions, `67/168` cells occupied, flag `neutral` |
+| human demo (90, UTC) | 90 actions, `75/168` cells occupied, flag `neutral` |
+| flat-coverage flag | occupied > 0.55 and evenness > 0.75 and total ≥ 40. Neither demo meets it. |
 | night hours | 00–05 in the selected timezone |
 | small-sample | total < 20 |
 

@@ -7,7 +7,7 @@
 
 | Level | After this file |
 | --- | --- |
-| Beginner | Run the bot demo and see totalActions equal the input length and occupiedCellRatio > 0.3 |
+| Beginner | Run both demos and see 90 actions, occupied cells `67/168` and `75/168`, and a single flag id `neutral` |
 | Intermediate | Explain evenness, the flat-coverage flag, and why night hours are timezone-dependent |
 | Masterclass | Say why a heatmap pattern is weak evidence and must not be used alone |
 
@@ -18,14 +18,17 @@
 ```ts
 const bot = fingerprintTemporal(demoBotTimestamps(90), { timeZone: "UTC" });
 bot.totalActions === 90
-bot.occupiedCellRatio > 0.3
+bot.occupiedCellRatio === 67 / 168
+bot.flags.map((flag) => flag.id) // ["neutral"]
 
 const human = fingerprintTemporal(demoHumanTimestamps(90), { timeZone: "UTC" });
-human.totalActions === 90
-human.flags.length > 0
+human.occupiedCellRatio === 75 / 168
+human.flags.map((flag) => flag.id) // ["neutral"]
 ```
 
-The bot demo steps every 45 minutes. The human demo prefers daytime jumps with occasional longer pauses.
+Ninety actions every 45 minutes cover 67 of the 168 cells. The daytime demo covers 75. Neither ratio is above `0.55`, so neither demo raises `flat-coverage`. The only flag is `neutral`, which means **no** strong structural flag. `flags.length > 0` was true and still misleading.
+
+A flat-coverage alert needs occupied ratio above `0.55`, evenness above `0.75`, and at least 40 actions. These two demos do not meet that. A bot-shaped list is not, by itself, the bot flag.
 
 ### Words
 
