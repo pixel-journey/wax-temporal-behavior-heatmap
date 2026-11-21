@@ -15,13 +15,23 @@
 | Timezone | Caller supplies IANA zone; night hours depend on it |
 | Ban from grid | **Never** — POLICY and course forbid it |
 | Live Hyperion | Unit demos are local timestamps |
+| Identity | Grid is not proof of a human or a bot |
 
 ## Attack angles
 
 1. Banning from flat coverage alone.  
 2. Ignoring timezone when reading "quiet nights."  
-3. Treating `flags.length > 0` as a strong alert (`neutral` still counts).
+3. Treating `flags.length > 0` as a strong alert (`neutral` still counts).  
+4. Mixing this grid with HCI / anomaly scores as if one number were authoritative.  
+5. Claiming a live account history was scanned when only local demos ran.
 
 ## Honesty limits
 
-Structure is one weak view. [docs.wax.io](https://docs.wax.io/) · [POLICY.md](POLICY.md) · [fingerprinter](https://github.com/pixel-journey/wax-organic-activity-fingerprinter).
+Structure is one weak view. Soft signal only.
+
+| Sibling | Distinction |
+| --- | --- |
+| [organic fingerprinter](https://github.com/pixel-journey/wax-organic-activity-fingerprinter) | HCI 53 / 5 / 45 |
+| [anomaly detector](https://github.com/pixel-journey/wax-behavioral-anomaly-detector) | Score 98 / 56 / 25 |
+
+[docs.wax.io](https://docs.wax.io/) · [POLICY.md](POLICY.md).
