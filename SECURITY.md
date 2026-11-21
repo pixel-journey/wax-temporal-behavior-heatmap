@@ -33,5 +33,6 @@ Structure is one weak view. Soft signal only.
 | --- | --- |
 | [organic fingerprinter](https://github.com/pixel-journey/wax-organic-activity-fingerprinter) | HCI 53 / 5 / 45 |
 | [anomaly detector](https://github.com/pixel-journey/wax-behavioral-anomaly-detector) | Score 98 / 56 / 25 |
+| [churn predictor](https://github.com/pixel-journey/wax-player-churn-predictor) | Weighted churn score |
 
 [docs.wax.io](https://docs.wax.io/) · [POLICY.md](POLICY.md).
